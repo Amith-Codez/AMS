@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+
+       <link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+
+    <div class="d-flex justify-content-center   align-items-center vh-100 bg-light">
+        <div class="card shadow-sm" style="width: 580px;">
+            <div class="card-body">
+                <h3 class="card-title text-center mb-4">Sign in to your account</h3>
+                <form>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email address</label>
+                        <input type="email" class="form-control" id="email" placeholder="name@example.com" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="password" placeholder="Enter your password" required>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="" id="remember">
+                            <label class="form-check-label" for="remember">Remember me</label>
+                        </div>
+                        <a href="#" class="small">Forgot password?</a>
+                    </div>
+                    <button id="log-button" type="submit" class="btn btn-primary w-100">Login</button>
+                    <p class="text-center mt-3 mb-0">New user? <a href="register.html">Register here</a></p>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.querySelector('form');
+            const emailInput = document.getElementById('email');
+            const passwordInput = document.getElementById('password');
+
+            form.addEventListener('submit', function (event) {
+                event.preventDefault();
+                const email = emailInput.value.trim();
+                const password = passwordInput.value.trim();
+
+                if (!email || !password) {
+                    alert('Fill this field');
+                    if (!email) {
+                        emailInput.focus();
+                    } else {
+                        passwordInput.focus();
+                    }
+                    return;
+                }
+
+                const directPassword = localStorage.getItem(email);
+                if (directPassword !== null) {
+                    if (directPassword === password) {
+                        alert('Login successful');
+                        window.location.href = 'dashboard.html';
+                    } else {
+                        alert('Wrong email or password');
+                    }
+                    return;
+                }
+
+                const users = getRegisteredUsers();
+                const userMatch = users.find(user => user.email === email && user.password === password);
+                if (userMatch) {
+                    alert('Login successful');
+                    window.location.href = 'dashboard.html';
+                } else {
+                    alert('Wrong email or password');
+                }
+            });
+
+            function getRegisteredUsers() {
+                const users = [];
+                const possibleKeys = ['users', 'registeredUsers', 'user'];
+
+                for (const key of possibleKeys) {
+                    const raw = localStorage.getItem(key);
+                    if (!raw) {
+                        continue;
+                    }
+
+                    try {
+                        const parsed = JSON.parse(raw);
+                        if (Array.isArray(parsed)) {
+                            parsed.forEach(item => {
+                                if (item && typeof item === 'object' && 'email' in item && 'password' in item) {
+                                    users.push({ email: item.email, password: item.password });
+                                }
+                            });
+                        } else if (parsed && typeof parsed === 'object' && 'email' in parsed && 'password' in parsed) {
+                            users.push({ email: parsed.email, password: parsed.password });
+                        }
+                    } catch (error) {
+                        // ignore invalid JSON
+                    }
+                }
+
+                const storedEmail = localStorage.getItem('email');
+                const storedPassword = localStorage.getItem('password');
+                if (storedEmail && storedPassword) {
+                    users.push({ email: storedEmail, password: storedPassword });
+                }
+
+                return users;
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+</body>
+
+</html>

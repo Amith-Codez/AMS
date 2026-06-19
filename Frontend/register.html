@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+</head>
+<body>
+    <div class="d-flex justify-content-center align-items-center min-vh-100 bg-light">
+        <div class="card shadow-sm register-container" style="max-width: 420px; width: 100%;">
+            <div class="card-body p-4">
+                <h2 class="card-title text-center mb-4">Register</h2>
+                <form id="registerForm">
+                    <div class="mb-3">
+                        <label for="nameInput" class="form-label">Name</label>
+                        <input type="text" class="form-control" id="nameInput" placeholder="Enter your name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="emailInput" class="form-label">Email address</label>
+                        <input type="email" class="form-control" id="emailInput" placeholder="name@example.com" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="passwordInput" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="passwordInput" placeholder="Enter password" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="confirmPasswordInput" class="form-label">Confirm Password</label>
+                        <input type="password" class="form-control" id="confirmPasswordInput" placeholder="Confirm password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100" id="reg-button">Register</button>
+                </form>
+                <p class="text-center mt-3 mb-0">Existing user? <a href="login.html">Click here to Login</a></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('registerForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const name = document.getElementById('nameInput').value.trim();
+            const email = document.getElementById('emailInput').value.trim();
+            const password = document.getElementById('passwordInput').value;
+            const confirmPassword = document.getElementById('confirmPasswordInput').value;
+
+            if (!name || !email || !password || !confirmPassword) {
+                alert('Please fill in all fields.');
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                alert('Passwords do not match.');
+                return;
+            }
+
+            const storedUsers = JSON.parse(localStorage.getItem('users') || '[]');
+            const userExists = storedUsers.some(user => user.email.toLowerCase() === email.toLowerCase());
+
+            if (userExists) {
+                alert('This email is already registered. Please login.');
+                return;
+            }
+
+            storedUsers.push({ name, email, password });
+            localStorage.setItem('users', JSON.stringify(storedUsers));
+
+            alert('Registration successful. Please login.');
+            window.location.href = 'login.html';
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+
+</body>
+</html>
